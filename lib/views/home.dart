@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rdf/constants/page.dart';
 
+import 'package:rdf/views/app.dart';
 import 'package:rdf/views/information.dart';
 import 'package:rdf/views/history.dart';
 import 'package:rdf/views/random.dart';
@@ -33,7 +34,7 @@ class _HomeState extends RawComponentState<HomePage> {
     _title = PageConstants.RANDOM_PAGE;
   }
 
-  _updateIndex(int i) {
+  void _updateIndex(int i) {
     setState(() {
       _index = i;
     });
@@ -57,6 +58,71 @@ class _HomeState extends RawComponentState<HomePage> {
     });
   }
 
+  void _showAboutDialog() {
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return new Container(
+              child: new Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 36.0, horizontal: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Text(
+                    packageInfo.appName.toUpperCase(),
+                    style: TextStyle(
+                        fontSize: 26.0, color: Theme.of(context).primaryColor),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Table(
+                  border: TableBorder(
+                    bottom: BorderSide(width: 0.7),
+                    top: BorderSide(width: 0.7),
+                    left: BorderSide(width: 0.7),
+                    right: BorderSide(width: 0.7),
+                    horizontalInside: BorderSide(width: 0.4),
+                    verticalInside: BorderSide(width: 0.4),
+                  ),
+                  children: <TableRow>[
+                    AboutRowBuilder(
+                      "Developer",
+                      "Kamontat Chantrachirathumrong",
+                    ),
+                    AboutRowBuilder(
+                      "Version",
+                      packageInfo.version,
+                    ),
+                    AboutRowBuilder(
+                      "Build number",
+                      packageInfo.buildNumber,
+                    ),
+                    AboutRowBuilder(
+                      "Update at",
+                      "17 Mar 2018",
+                    ),
+                    AboutRowBuilder(
+                      "License",
+                      "MIT",
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ));
+        },
+      );
+    });
+  }
+
+  void _toggleBrightness() {
+    ThemeConfiguration().toggleThemeBrightness();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -66,67 +132,11 @@ class _HomeState extends RawComponentState<HomePage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.info_outline),
-            onPressed: () {
-              PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return new Container(
-                        child: new Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 36.0, horizontal: 12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20.0),
-                            child: Text(
-                              packageInfo.appName.toUpperCase(),
-                              style: TextStyle(
-                                  fontSize: 26.0,
-                                  color: Theme.of(context).primaryColor),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Table(
-                            border: TableBorder(
-                              bottom: BorderSide(width: 0.7),
-                              top: BorderSide(width: 0.7),
-                              left: BorderSide(width: 0.7),
-                              right: BorderSide(width: 0.7),
-                              horizontalInside: BorderSide(width: 0.4),
-                              verticalInside: BorderSide(width: 0.4),
-                            ),
-                            children: <TableRow>[
-                              AboutRowBuilder(
-                                "Developer",
-                                "Kamontat Chantrachirathumrong",
-                              ),
-                              AboutRowBuilder(
-                                "Version",
-                                packageInfo.version,
-                              ),
-                              AboutRowBuilder(
-                                "Build number",
-                                packageInfo.buildNumber,
-                              ),
-                              AboutRowBuilder(
-                                "Update at",
-                                "17 Mar 2018",
-                              ),
-                              AboutRowBuilder(
-                                "License",
-                                "MIT",
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ));
-                  },
-                );
-              });
-            },
+            onPressed: _showAboutDialog,
+          ),
+          IconButton(
+            icon: Icon(Icons.lightbulb_outline),
+            onPressed: _toggleBrightness,
           )
         ],
       ),

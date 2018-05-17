@@ -5,27 +5,90 @@ import 'package:rdf/containers/cut_corners_border.dart';
 
 import 'package:rdf/models/menu.dart';
 
-class MyApp extends StatelessWidget {
+final _themeGlobalKey = new GlobalKey(debugLabel: 'app_theme');
+
+class MyApp extends StatefulWidget {
+  MyApp() : super(key: _themeGlobalKey);
+
+  @override
+  State<MyApp> createState() => new _AppState();
+}
+
+class _AppState extends State<MyApp> {
+  final ThemeConfiguration themeConfig = ThemeConfiguration();
+
+  ThemeData theme;
+
+  @override
+  void initState() {
+    super.initState();
+
+    themeConfig.registerUI(this);
+    theme = themeConfig.theme;
+  }
+
+  void updateTheme(ThemeData theme) {
+    setState(() {
+      this.theme = theme;
+    });
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    print("Draw Material app again brightness ${theme.brightness}");
+
     return new MaterialApp(
       title: 'RDF',
-      theme: new ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
-        // counter didn't reset back to zero; the application is not restarted.
-        primarySwatch: Colors.blue,
-        inputDecorationTheme: InputDecorationTheme(
-          border: CutCornersBorder(),
-        ),
-      ),
+      theme: theme,
       home: new HomePage(MenuRepository()),
     );
+  }
+}
+
+class ThemeConfiguration {
+  static ThemeConfiguration _configuration = ThemeConfiguration._initial();
+
+  ThemeData _theme;
+  _AppState _appState;
+
+  ThemeConfiguration._initial() {
+    _theme = new ThemeData(
+      primarySwatch: Colors.blue,
+      inputDecorationTheme: InputDecorationTheme(
+        border: CutCornersBorder(),
+      ),
+    );
+  }
+
+  factory ThemeConfiguration() {
+    return _configuration;
+  }
+
+  ThemeData get theme {
+    return _theme;
+  }
+
+  void registerUI(_AppState _appState) {
+    print("regis UI: $_appState");
+    this._appState = _appState;
+  }
+
+  void updateTheme(ThemeData data) {
+    _theme = data;
+    this._appState.updateTheme(_theme);
+  }
+
+  void toggleThemeBrightness() {
+    print("toggle theme from ${this._theme.brightness}");
+//    this._theme = this._theme.copyWith(
+//        brightness: this._theme.brightness == Brightness.light
+//            ? Brightness.dark
+//            : Brightness.light);
+    updateTheme(this._theme.copyWith(
+        brightness: this._theme.brightness == Brightness.light
+            ? Brightness.dark
+            : Brightness.light));
+    print("             to   ${this._theme.brightness}");
   }
 }
