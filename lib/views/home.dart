@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rdf/constants/page.dart';
 
-import 'package:rdf/views/app.dart';
+import 'package:rdf/views/theme.dart';
 import 'package:rdf/views/information.dart';
 import 'package:rdf/views/history.dart';
 import 'package:rdf/views/random.dart';
@@ -120,12 +120,12 @@ class _HomeState extends RawComponentState<HomePage> {
   }
 
   void _toggleBrightness() {
-    ThemeConfiguration().toggleThemeBrightness();
+    ThemeChanger.of(context).toggleBrightness();
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       appBar: new AppBar(
         title: new Text(_title),
         centerTitle: true,
