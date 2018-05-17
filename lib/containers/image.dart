@@ -13,5 +13,6 @@ class MyImage extends CachedNetworkImage {
           placeholder: new CircularProgressIndicator(),
           errorWidget: new Icon(Icons.error),
           fit: BoxFit.fitWidth,
+          height: 200.0,
         );
 }

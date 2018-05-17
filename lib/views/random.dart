@@ -22,6 +22,8 @@ class _RandomState extends RawComponentState<RandomPage> {
   _RandomState(MenuRepository menuRepository) : super(menuRepository) {
     _menu = menuRepository?.getLatestMenu();
     disableAction = _menu == null;
+
+    _random(force: false);
   }
 
   @override
@@ -39,23 +41,40 @@ class _RandomState extends RawComponentState<RandomPage> {
           RaisedRandomButton(
             () {
               print("Random be clicked");
-              FirebaseDatabase.instance
-                  .reference()
-                  .child("menus")
-                  .once()
-                  .then((snapshot) {
-                menuRepository.updateFromFirebase(snapshot.value);
-                setState(() {
-                  _menu = menuRepository.random();
-                  if (_menu != null) {
-                    disableAction = false;
-                  }
-                });
-              });
+              _random(force: true);
             },
           )
         ],
       ),
     );
+  }
+
+  _random({force = false}) {
+    if (force) {
+      _rawRandom();
+    } else {
+      if (_menu == null) {
+        _rawRandom();
+      }
+    }
+  }
+
+  _rawRandom() {
+    FirebaseDatabase.instance
+        .reference()
+        .child("menus")
+        .once()
+        .then((snapshot) {
+      print(snapshot.key);
+      menuRepository.updateFromFirebase(snapshot.value);
+      setState(() {
+        _menu = menuRepository.random();
+        if (_menu != null) {
+          disableAction = false;
+        }
+      });
+    }).catchError((e) {
+      print(e);
+    });
   }
 }

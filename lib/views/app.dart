@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rdf/views/home.dart';
 
+import 'package:rdf/containers/cut_corners_border.dart';
+
 import 'package:rdf/models/menu.dart';
 
 class MyApp extends StatelessWidget {
@@ -19,6 +21,9 @@ class MyApp extends StatelessWidget {
         // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
         // counter didn't reset back to zero; the application is not restarted.
         primarySwatch: Colors.blue,
+        inputDecorationTheme: InputDecorationTheme(
+          border: CutCornersBorder(),
+        ),
       ),
       home: new HomePage(MenuRepository()),
     );
