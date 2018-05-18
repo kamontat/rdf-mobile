@@ -81,10 +81,6 @@ class ThemeConfiguration {
 
   void toggleThemeBrightness() {
     print("toggle theme from ${this._theme.brightness}");
-//    this._theme = this._theme.copyWith(
-//        brightness: this._theme.brightness == Brightness.light
-//            ? Brightness.dark
-//            : Brightness.light);
     updateTheme(this._theme.copyWith(
         brightness: this._theme.brightness == Brightness.light
             ? Brightness.dark
