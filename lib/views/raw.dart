@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +24,7 @@ abstract class RawComponentState<T extends StatefulWidget> extends State<T> {
   Future<FirebaseUser> updateFirebaseUser({FirebaseUser user}) {
     if (user != null) {
       this.user = user;
+      fetchUserInformation();
       return FutureBuilder<FirebaseUser>(
         builder: (BuildContext context, AsyncSnapshot snapshot) {},
       ).future;
@@ -43,4 +45,15 @@ abstract class RawComponentState<T extends StatefulWidget> extends State<T> {
   }
 
   RawComponentState(this.menuRepository);
+
+  void fetchUserInformation() {
+    print("Fetching.. (user information)");
+    FirebaseDatabase.instance
+        .reference()
+        .child("users")
+        .onValue
+        .listen((Event e) {
+      print(e.toString());
+    });
+  }
 }
