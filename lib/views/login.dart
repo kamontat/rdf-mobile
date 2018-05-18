@@ -17,6 +17,7 @@ class _LoginState extends RawComponentState<LoginPage> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _scrollController = ScrollController();
 
   var _errorMessage = "";
 
@@ -74,6 +75,7 @@ class _LoginState extends RawComponentState<LoginPage> {
   }
 
   String _emailValidator(value) {
+    // _scroll();
     if (value.isEmpty) {
       return 'Email address is require';
     }
@@ -86,6 +88,7 @@ class _LoginState extends RawComponentState<LoginPage> {
   }
 
   String _passwordValidator(value) {
+    // _scroll();
     if (value.isEmpty) {
       return 'Password is require';
     }
@@ -98,6 +101,11 @@ class _LoginState extends RawComponentState<LoginPage> {
   _clearAction() {
     _emailController.clear();
     _passwordController.clear();
+  }
+
+  void _scroll() {
+    _scrollController.animateTo(0.0,
+        duration: Duration(milliseconds: 100), curve: Curves.decelerate);
   }
 
   @override
@@ -113,10 +121,14 @@ class _LoginState extends RawComponentState<LoginPage> {
             });
           },
           child: SingleChildScrollView(
+            reverse: true,
+            controller: _scrollController,
             padding:
                 const EdgeInsets.symmetric(vertical: 4.0, horizontal: 14.0),
             child: Column(
               children: <Widget>[
+                SwipeDownBackButton(context),
+                TitleContainer(),
                 FormTextField(
                   controller: _emailController,
                   validator: _emailValidator,
@@ -164,14 +176,31 @@ class _LoginState extends RawComponentState<LoginPage> {
   }
 }
 
+class TitleContainer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 30.0),
+        child: Text("Hello world"),
+      ),
+    );
+  }
+}
+
 class FormTextField extends TextFormField {
+  final _focusNode;
+
   FormTextField({
+    FocusNode focusNode,
     TextEditingController controller,
     FormFieldValidator<String> validator,
     labelText = "string",
     isPassword = false,
     isEmail = false,
-  }) : super(
+  })  : _focusNode = focusNode,
+        super(
+          focusNode: focusNode,
           autofocus: true,
           autovalidate: true,
           keyboardType:
@@ -182,6 +211,28 @@ class FormTextField extends TextFormField {
           obscureText: isPassword,
           controller: controller,
           validator: validator,
+        );
+
+  FormTextField onFocusListener(VoidCallback callBack) {
+    _focusNode?.addListener(callBack);
+    return this;
+  }
+
+  FormTextField deleteFocusListener(VoidCallback callBack) {
+    _focusNode?.removeListener(callBack);
+    return this;
+  }
+}
+
+class SwipeDownBackButton extends IconButton {
+  SwipeDownBackButton(BuildContext context)
+      : super(
+          icon: Icon(Icons.keyboard_arrow_down),
+          iconSize: 45.0,
+          padding: const EdgeInsets.all(23.0),
+          onPressed: () {
+            Navigator.maybePop(context);
+          },
         );
 }
 
