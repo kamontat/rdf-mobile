@@ -29,6 +29,11 @@ end
 target 'Runner' do
   use_frameworks!
 
+  pod 'Firebase'
+  pod 'Firebase/Core'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Messaging'
+
   # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
   # referring to absolute paths on developers' machines.
   system('rm -rf Pods/.symlinks')
